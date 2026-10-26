@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Y-Key</title>
+  <link rel="stylesheet" href="..\static\style.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div style="display: flex; align-items: center; gap: 0.5rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border);">
+        <div class="logo-icon">✨</div>
+        <div>
+          <div style="font-weight: 800;">Y-Key</div>
+          <div style="font-size: 0.625rem; color: var(--gray-light); text-transform: uppercase;">Admin Panel</div>
+        </div>
+      </div>
+      <nav class="admin-nav">
+        <a href="#" class="active" onclick="showSection('dashboard')">📊 Dashboard</a>
+        <a href="#" onclick="showSection('orders')">🛍️ Orders</a>
+        <a href="#" onclick="showSection('customers')">👥 Customers</a>
+        <a href="#" onclick="showSection('products')">📦 Produk</a>
+        <a href="#" onclick="showSection('chats')">💬 Chat AI</a>
+      </nav>
+      <div style="margin-top: auto; padding-top: 1rem; border-top: 1px solid var(--border);">
+        <div style="background: var(--gray-bg); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.5rem;">
+          <div style="font-size: 0.875rem; font-weight: 600;" id="admin-name">Admin</div>
+          <div style="font-size: 0.6875rem; color: var(--gray-light);" id="admin-username">@admin</div>
+        </div>
+        <button class="btn btn-ghost" style="width: 100%; justify-content: center;" onclick="logout()">🚪 Logout</button>
+      </div>
+    </aside>
+
+    <main class="admin-content">
+      <!-- DASHBOARD SECTION -->
+      <div id="section-dashboard">
+        <h1 style="font-size: 1.875rem; font-weight: 800; margin-bottom: 0.25rem;">Dashboard</h1>
+        <p style="color: var(--gray-light); margin-bottom: 1.5rem;">Ringkasan performa Y-Key</p>
+
+        <div class="stats-grid" id="stats-grid"></div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">📈 Sortir Penjualan per Kategori</div>
+            <p style="font-size: 0.75rem; color: var(--gray-light); margin-top: 0.25rem;">AI otomatis catat pembelian customer ke sini</p>
+          </div>
+          <div class="admin-card-body">
+            <div class="category-grid" id="category-grid"></div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">🏆 Produk Terlaris</div>
+            </div>
+            <div class="admin-card-body" id="top-products"></div>
+          </div>
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title">🛍️ Order Terbaru</div>
+            </div>
+            <div class="admin-card-body" id="recent-orders"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORDERS SECTION -->
+      <div id="section-orders" style="display: none;">
+        <h1 style="font-size: 1.875rem; font-weight: 800; margin-bottom: 0.25rem;">Orders</h1>
+        <p style="color: var(--gray-light); margin-bottom: 1.5rem;" id="orders-count">0 order</p>
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="filter-bar">
+              <input type="text" class="filter-input" id="order-search" placeholder="🔍 Cari kode / nama / WA..." oninput="loadOrders()">
+              <select class="filter-select" id="order-status-filter" onchange="loadOrders()">
+                <option value="ALL">Semua Status</option>
+                <option value="PENDING">Menunggu Pembayaran</option>
+                <option value="PAID">Sudah Bayar</option>
+                <option value="SHIPPED">Dikirim</option>
+                <option value="DONE">Selesai</option>
+                <option value="CANCELLED">Dibatalkan</option>
+              </select>
+              <select class="filter-select" id="order-category-filter" onchange="loadOrders()">
+                <option value="ALL">Semua Kategori</option>
+                <option value="YOGURT">🍓 Yogurt</option>
+                <option value="KEYCHAIN">🏷️ Keychain</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="admin-card">
+          <div class="admin-card-body" style="padding: 0;">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Order</th><th>Customer</th><th>Produk</th><th>Total</th><th>Status</th><th>Tanggal</th>
+                </tr>
+              </thead>
+              <tbody id="orders-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CUSTOMERS SECTION -->
+      <div id="section-customers" style="display: none;">
+        <h1 style="font-size: 1.875rem; font-weight: 800; margin-bottom: 0.25rem;">Customers</h1>
+        <p style="color: var(--gray-light); margin-bottom: 1.5rem;" id="customers-count">0 customer</p>
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="filter-bar">
+              <input type="text" class="filter-input" id="customer-search" placeholder="🔍 Cari nama / WA / email..." oninput="loadCustomers()">
+              <select class="filter-select" id="customer-category-filter" onchange="loadCustomers()">
+                <option value="ALL">Semua Customer</option>
+                <option value="YOGURT">🍓 Pembeli Yogurt</option>
+                <option value="KEYCHAIN">🏷️ Pembeli Keychain</option>
+              </select>
+              <div></div>
+            </div>
+          </div>
+        </div>
+        <div id="customers-grid" class="stats-grid"></div>
+      </div>
+
+      <!-- PRODUCTS SECTION -->
+      <div id="section-products" style="display: none;">
+        <h1 style="font-size: 1.875rem; font-weight: 800; margin-bottom: 0.25rem;">Produk</h1>
+        <p style="color: var(--gray-light); margin-bottom: 1.5rem;" id="products-count">0 produk</p>
+        <div class="admin-card">
+          <div class="admin-card-body" style="padding: 0;">
+            <table class="table">
+              <thead>
+                <tr><th>Produk</th><th>Kategori</th><th>Harga</th><th>Stok</th><th>Status</th></tr>
+              </thead>
+              <tbody id="products-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHATS SECTION -->
+      <div id="section-chats" style="display: none;">
+        <h1 style="font-size: 1.875rem; font-weight: 800; margin-bottom: 0.25rem;">Chat AI Sessions</h1>
+        <p style="color: var(--gray-light); margin-bottom: 1.5rem;">Semua percakapan customer dengan AI chatbot</p>
+        <div id="chats-grid" class="stats-grid"></div>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/admin.js"></script>
+</body>
+</html>
